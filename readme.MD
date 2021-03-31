@@ -1,7 +1,7 @@
 
 # Run Docker
 
-# Setup
+## Setup
 
 cd app
 
