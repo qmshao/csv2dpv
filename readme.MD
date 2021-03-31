@@ -20,6 +20,9 @@ docker ps
 #### List All Containers
 docker ps -a
 
+#### List Images
+docker ps -a
+
 #### Stop Container
 docker stop [container]
 
