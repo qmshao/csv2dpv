@@ -58,7 +58,7 @@ app.layout = html.Div(
             dark=True,
         ),
         dbc.Container([
-            html.H1("HYSYS CSV to PDV File Conversion"),
+            html.H1("HYSYS CSV to DPV File Conversion"),
             html.H2("Upload"),
             dcc.Upload(
                 id="upload-data",
