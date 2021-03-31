@@ -1,0 +1,6 @@
+app:
+  build: ./app
+  ports:
+   - "8051:8050"
+  volumes:
+   - .:/code
