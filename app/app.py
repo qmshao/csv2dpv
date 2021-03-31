@@ -18,7 +18,7 @@ from dash.dependencies import Input, Output
 
 import dash_bootstrap_components as dbc
 from lib.HysysCSV2PDV import csv2pdv
-
+from lib.util import delete_folder
 
 
 DOWNLOAD_DIRECTORY = "../downloads"
@@ -38,6 +38,16 @@ def download(path):
     """Serve a file from the upload directory."""
     return send_from_directory(DOWNLOAD_DIRECTORY, path, as_attachment=True)
 
+@server.route("/list")
+def list():
+    filelist = uploaded_files()
+    return '<br>'.join(filelist)
+
+@server.route("/deleteall")
+def deleteall():
+    delete_folder(DOWNLOAD_DIRECTORY)
+    delete_folder('../data')
+    return 'OK'
 
 app.layout = html.Div(
     [
@@ -126,4 +136,4 @@ def update_output(filename, contents):
 
 # Running the server
 if __name__ == "__main__":
-    app.run_server(debug=False, host='0.0.0.0', port=3800)
+    app.run_server(debug=True, host='0.0.0.0', port=3800)

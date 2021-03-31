@@ -32,11 +32,9 @@ def csv2pdv(csvfile, filename):
     exportpath = Path('../data') / timestamp
     exportpath.mkdir(parents=True, exist_ok=True)
 
-
-    df = pd.read_csv(csvfile, skiprows=11, header=[0,1],dtype='unicode').dropna(axis=1)
+    df = pd.read_csv(csvfile, skiprows=10, header=[0,1],dtype='unicode').dropna(axis=1)
     df.drop(df.columns[0], axis=1, inplace=True)
 
-    print(__file__)
     zipname =  filename[:-4] + '-' +  timestamp + '.zip'
     
     length = len(df.index)
