@@ -14,8 +14,20 @@ docker run -d -p 8500:3800 csv2pdv:0.1
 
 ## Management
 
+#### List Running Containers
+docker ps
+
+#### List All Containers
+docker ps -a
+
+#### Stop Container
 docker stop [container]
 
+#### Remove Container
 docker rm [container] [-f to force]
 
+#### Remove Image
 docker rmi [image]
+
+#### Run Bash
+docker exec -it [container] bash
