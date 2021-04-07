@@ -13,7 +13,7 @@ docker run -d -p 8500:3800 csv2pdv:0.1
 ## Management (Using docker-compose)
 
 #### Startup
-docker-compose up
+docker-compose up -d
 
 #### Other Operations
 docker-compose up [-d] [--build]
