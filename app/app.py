@@ -18,8 +18,6 @@ from dash.dependencies import Input, Output
 
 import logging
 import os
-path = os.path.dirname(os.path.abspath(__file__))
-logging.basicConfig(filename=path+'/../log/app.log', format='%(asctime)s  %(levelname)s:  %(message)s', datefmt='%m/%d/%Y %H:%M:%S', level=logging.INFO)
 
 import dash_bootstrap_components as dbc
 from lib.HysysCSV2DPV import csv2dpv
@@ -27,16 +25,20 @@ from lib.util import delete_folder
 
 
 DOWNLOAD_DIRECTORY = "../downloads"
+LOG_DIRECTORY = "../LOG"
 
 if not os.path.exists(DOWNLOAD_DIRECTORY):
     os.makedirs(DOWNLOAD_DIRECTORY)
 
+if not os.path.exists(LOG_DIRECTORY):
+    os.makedirs(LOG_DIRECTORY)
+
+logging.basicConfig(filename=LOG_DIRECTORY+'/app.log', format='%(asctime)s  %(levelname)s:  %(message)s', datefmt='%m/%d/%Y %H:%M:%S', level=logging.INFO)
 
 # Normally, Dash creates its own Flask server internally. By creating our own,
 # we can create a route for downloading files directly:
 server = Flask(__name__)
 app = dash.Dash(server=server, external_stylesheets=[dbc.themes.BOOTSTRAP])
-
 
 @server.route("/downloads/<path:path>")
 def download(path):
@@ -154,4 +156,4 @@ def update_output(filename, contents):
 
 # Running the server
 if __name__ == "__main__":
-    app.run_server(debug=True, host='0.0.0.0', port=3800)
+    app.run_server(debug=False, host='0.0.0.0', port=3800)

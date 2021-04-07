@@ -1,6 +1,8 @@
-app:
-  build: ./app
-  ports:
-   - "8051:8050"
-  volumes:
-   - .:/code
+services:
+  csv2dpv:
+    build: ./app
+    image: csv2dpv:0.2
+    ports:
+    - "8500:3800"
+    volumes:
+    - ./app:/code
