@@ -25,13 +25,15 @@ from lib.util import delete_folder
 
 
 DOWNLOAD_DIRECTORY = "../downloads"
-LOG_DIRECTORY = "../LOG"
+LOG_DIRECTORY = "../log"
 
 if not os.path.exists(DOWNLOAD_DIRECTORY):
     os.makedirs(DOWNLOAD_DIRECTORY)
 
 if not os.path.exists(LOG_DIRECTORY):
     os.makedirs(LOG_DIRECTORY)
+    with open(LOG_DIRECTORY+'/app.log', 'w') as fp:
+        pass
 
 logging.basicConfig(filename=LOG_DIRECTORY+'/app.log', format='%(asctime)s  %(levelname)s:  %(message)s', datefmt='%m/%d/%Y %H:%M:%S', level=logging.INFO)
 
@@ -59,7 +61,7 @@ def deleteall():
 
 @server.route("/log")
 def readlog():
-    with open('../log/app.log', 'r') as f:
+    with open(LOG_DIRECTORY + '/app.log', 'r') as f:
         return f.read().replace('\n','<br>')
 
 app.layout = html.Div(
