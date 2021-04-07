@@ -10,9 +10,18 @@ docker build -t csv2pdv:0.1 .
 docker run -d -p 8500:3800 csv2pdv:0.1
 
 
+## Management (Using docker-compose)
+
+#### Startup
+docker-compose up
+
+#### Other Operations
+docker-compose up [-d] [--build]
+docker-compose down
 
 
-## Management
+
+## Management (Using Docker)
 
 #### List Running Containers
 docker ps
@@ -34,3 +43,6 @@ docker rmi [image]
 
 #### Run Bash
 docker exec -it [container] bash
+
+### Clean
+docker system prune
