@@ -16,8 +16,13 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
+import logging
+import os
+path = os.path.dirname(os.path.abspath(__file__))
+logging.basicConfig(filename=path+'/../log/app.log', format='%(asctime)s  %(levelname)s:  %(message)s', datefmt='%m/%d/%Y %H:%M:%S', level=logging.INFO)
+
 import dash_bootstrap_components as dbc
-from lib.HysysCSV2PDV import csv2pdv
+from lib.HysysCSV2DPV import csv2dpv
 from lib.util import delete_folder
 
 
@@ -48,6 +53,12 @@ def deleteall():
     delete_folder(DOWNLOAD_DIRECTORY)
     delete_folder('../data')
     return 'OK'
+
+
+@server.route("/log")
+def readlog():
+    with open('../log/app.log', 'r') as f:
+        return f.read().replace('\n','<br>')
 
 app.layout = html.Div(
     [
@@ -118,6 +129,7 @@ def file_download_link(filename):
 def update_output(filename, contents):
     """Save uploaded files and regenerate the file list."""
 
+    SUCCESS = False
     zipfile = None
     if contents:    
         try:
@@ -125,15 +137,21 @@ def update_output(filename, contents):
             decoded = base64.b64decode(content_string)
             if '.csv' in filename.lower():
                 # Assume that the user uploaded a CSV file
-                zipfile = csv2pdv(io.BytesIO(decoded), filename)
+                zipfile = csv2dpv(io.BytesIO(decoded), filename)
+                SUCCESS = True
+            else:
+                zipfile = 'CSV file required'
         except Exception as e:
-            print(e)
+            logging.error(str(e))
+            zipfile = e
             
-    if zipfile:
+    if SUCCESS:
         return [html.Li(file_download_link(zipfile))]
+    elif zipfile:
+        return [html.Li('File Read ERROR: please check your file format'), html.Li(str(zipfile))]
     else:
         return [html.Li("No file uploaded yet!")]
 
 # Running the server
 if __name__ == "__main__":
-    app.run_server(debug=False, host='0.0.0.0', port=3800)
+    app.run_server(debug=True, host='0.0.0.0', port=3800)

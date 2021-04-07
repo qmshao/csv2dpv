@@ -10,7 +10,7 @@ from pathlib import Path
 from zipfile import ZipFile
 import time
 
-tempalte = r"""#=====DMCplus===DMCplus===DMCplus===DMCplus===DMCplus===DMCplus===DMCplus=====#
+tempalte = r"""!#=====DMCplus===DMCplus===DMCplus===DMCplus===DMCplus===DMCplus===DMCplus=====#
 !# This file contains the information of DMCplus Model vector. Do not modify  #
 !#=====DMCplus===DMCplus===DMCplus===DMCplus===DMCplus===DMCplus===DMCplus=====#
 .VERsion   "1"
@@ -26,7 +26,7 @@ tempalte = r"""#=====DMCplus===DMCplus===DMCplus===DMCplus===DMCplus===DMCplus==
 !!!END RAW DATA
 !========================================"""
 
-def csv2pdv(csvfile, filename):
+def csv2dpv(csvfile, filename):
     starttime = time.time()
     timestamp = f'{starttime:<19}'.replace(' ', '0')[:18].replace('.', '')
     exportpath = Path('../data') / timestamp
