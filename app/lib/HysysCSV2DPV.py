@@ -26,16 +26,20 @@ tempalte = r"""!#=====DMCplus===DMCplus===DMCplus===DMCplus===DMCplus===DMCplus=
 !!!END RAW DATA
 !========================================"""
 
-def csv2dpv(csvfile, filename):
+def csv2dpv(filename, csvfile = None):
     starttime = time.time()
     timestamp = f'{starttime:<19}'.replace(' ', '0')[:18].replace('.', '')
     exportpath = Path('../data') / timestamp
     exportpath.mkdir(parents=True, exist_ok=True)
 
-    df = pd.read_csv(csvfile, skiprows=10, header=[0,1],dtype='unicode').dropna(axis=1)
+    if csvfile:
+        df = pd.read_csv(csvfile, skiprows=10, header=[0,1],dtype='unicode').dropna(axis=1)
+    else: 
+        df = pd.read_csv(filename, skiprows=10, header=[0,1],dtype='unicode').dropna(axis=1)
+    
     df.drop(df.columns[0], axis=1, inplace=True)
 
-    zipname =  filename[:-4] + '-' +  timestamp + '.zip'
+    zipname =  Path(filename).name[:-4] + '-' +  timestamp + '.zip'
     
     length = len(df.index)
     with ZipFile('../downloads/' + zipname,'w') as zipf:

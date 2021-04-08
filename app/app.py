@@ -15,6 +15,8 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+import dash_uploader as du
+import uuid
 
 import logging
 import os
@@ -25,6 +27,7 @@ from lib.util import delete_folder
 
 
 DOWNLOAD_DIRECTORY = "../downloads"
+UPLOAD_DIRECTORY = "../uploads"
 LOG_DIRECTORY = "../log"
 
 if not os.path.exists(DOWNLOAD_DIRECTORY):
@@ -41,6 +44,8 @@ logging.basicConfig(filename=LOG_DIRECTORY+'/app.log', format='%(asctime)s  %(le
 # we can create a route for downloading files directly:
 server = Flask(__name__)
 app = dash.Dash(server=server, external_stylesheets=[dbc.themes.BOOTSTRAP])
+du.configure_upload(app, UPLOAD_DIRECTORY)
+
 
 @server.route("/downloads/<path:path>")
 def download(path):
@@ -75,25 +80,12 @@ app.layout = html.Div(
         dbc.Container([
             html.H1("HYSYS CSV to DPV File Conversion"),
             html.H2("Upload"),
-            dcc.Upload(
-                id="upload-data",
-                children=html.Div([
-                    'Drag and Drop or ',
-                    html.A('Select Files')
-                ]),
-                style={
-                    "width": "100%",
-                    "max-width": "600px",
-                    "height": "60px",
-                    "lineHeight": "60px",
-                    "borderWidth": "1px",
-                    "borderStyle": "dashed",
-                    "borderRadius": "5px",
-                    "textAlign": "center",
-                    "margin": "10px",
-                },
-                className="mx-auto",
-                multiple=False,
+            du.Upload(
+                id="dash-uploader",
+                max_file_size=1800,  # 1800 Mb
+                filetypes=['csv'],
+                max_files=1,
+                upload_id=uuid.uuid1(),  # Unique session id
             ),
             html.H2("File List"),
             html.Ul(id="file-list"),
@@ -125,29 +117,21 @@ def file_download_link(filename):
     location = "/downloads/{}".format(urlquote(filename))
     return html.A(filename, href=location)
 
-
-@app.callback(
+@du.callback(
     Output("file-list", "children"),
-    [Input("upload-data", "filename"), Input("upload-data", "contents")],
+    id='dash-uploader',
 )
-def update_output(filename, contents):
+def process_csv(filenames):
     """Save uploaded files and regenerate the file list."""
-
+    print(filenames)
     SUCCESS = False
     zipfile = None
-    if contents:    
-        try:
-            content_type, content_string = contents.split(',')
-            decoded = base64.b64decode(content_string)
-            if '.csv' in filename.lower():
-                # Assume that the user uploaded a CSV file
-                zipfile = csv2dpv(io.BytesIO(decoded), filename)
-                SUCCESS = True
-            else:
-                zipfile = 'CSV file required'
-        except Exception as e:
-            logging.error(str(e))
-            zipfile = e
+    try:
+        zipfile = csv2dpv(filenames[0])
+        SUCCESS = True
+    except Exception as e:
+        logging.error(str(e))
+        zipfile = e
             
     if SUCCESS:
         return [html.Li(file_download_link(zipfile))]
@@ -156,6 +140,7 @@ def update_output(filename, contents):
     else:
         return [html.Li("No file uploaded yet!")]
 
+
 # Running the server
 if __name__ == "__main__":
-    app.run_server(debug=False, host='0.0.0.0', port=3800)
+    app.run_server(debug=True, host='0.0.0.0', port=3800)
